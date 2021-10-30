@@ -37,6 +37,14 @@ async function run() {
             // console.log(result);
         })
 
+        // GET API for all data for Manage All orders
+        app.get("/manageAllOrders", async (req, res) => {
+            const cursor = bookCollection.find({});
+            const result = await cursor.toArray();
+            res.send(result);
+            // console.log(result);
+        })
+
 
 
          //GET API for single product
@@ -58,6 +66,14 @@ async function run() {
             console.log('this is result', result);
         })
 
+        // POST API for single insert
+        app.post('/addSinglePackage', async (req, res) => {
+            const product = req.body;
+            const result = await servicesCollection.insertOne(product);
+            res.send(result)
+            console.log('this is result', result);
+        })
+
 
          //DELETE API
          app.delete('/deleteOrder/:id', async (req, res) => {
@@ -66,6 +82,24 @@ async function run() {
             const result = await bookCollection.deleteOne(query);
             res.send(result);
             
+        })
+
+
+        // Update Single Product From Manage All Orders
+        app.put('/updateSingleOrder/:id', async (req, res) =>{
+            const id = req.params.id;
+            console.log(id);
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                  status: "Approved"
+                }
+              };
+
+              const result = await bookCollection.updateOne(filter, updateDoc, options);
+              res.json(result);
+
         })
 
 
